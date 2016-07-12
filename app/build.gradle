@@ -1,0 +1,164 @@
+/*apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "org.videolan.vlc"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+}*/
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.android.databinding'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    flavorDimensions "target", "abi"
+
+    lintOptions {
+        abortOnError false
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    defaultConfig {
+        applicationId "org.videolan.vlc"
+
+        resValue "string", "build_time", buildTime()
+        resValue "string", "build_host", hostName()
+        resValue "string", "build_revision", revision()
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources false
+            proguardFile 'proguard.cfg'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            jniDebuggable true
+        }
+    }
+    productFlavors {
+        vanilla {
+            dimension "target"
+            versionCode = 1
+        }
+//        chrome {
+//            minSdkVersion 19
+//            dimension "target"
+//            versionCode = 2
+//        }
+        ARMv7 {
+            dimension "abi"
+            versionCode = 4
+        }
+
+    }
+    // make per-variant version code
+    applicationVariants.all { variant ->
+        def manifestParser = new com.android.builder.core.DefaultManifestParser()
+        // get the version code of each flavor
+        def vlcVersion = manifestParser.getVersionName(android.sourceSets.main.manifest.srcFile)
+        def targetVersion = variant.productFlavors.get(0).versionCode
+        def abiVersion = variant.productFlavors.get(1).versionCode
+
+        // set the composite code
+        variant.mergedFlavor.versionCode = targetVersion * 10000000 + manifestParser.getVersionCode(android.sourceSets.main.manifest.srcFile) + abiVersion
+        variant.mergedFlavor.versionName = vlcVersion
+
+        //Custom APK name
+        variant.outputs.each { output ->
+            def outputName = "VLC-Android-"
+            if (!variant.productFlavors.get(0).name.equals("vanilla"))
+                outputName += variant.productFlavors.get(0).name.toUpperCase() + "-"
+            outputName += vlcVersion + "-" + variant.productFlavors.get(1).name + ".apk"
+            output.outputFile = new File(output.outputFile.parentFile, outputName);
+
+            //set intents with correct package name
+            output.processManifest.doLast{
+                def manifestOutFile = output.processManifest.manifestOutputFile
+                def newFileContents = manifestOutFile.getText('UTF-8').replace("_PACKAGENAME_", variant.applicationId)
+                manifestOutFile.write(newFileContents, 'UTF-8')
+            }
+        }
+    }
+
+    sourceSets {
+        main{
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java', 'src/main/java']
+            resources.srcDirs = ['src/main/java', 'src/main/java']
+            aidl.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['assets']
+        }
+//        release {
+//            manifest.srcFile 'flavors/release/AndroidManifest.xml'
+//        }
+//        chrome{
+//            Manifest.srcFile 'flavors/chrome/AndroidManifest.xml'
+//            res.srcDirs = ['flavors/chrome/res']
+//        }
+    }
+
+
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    compile(name: 'libvlc-3.0.0-2.1.0', ext: 'aar')
+    compile(name: 'api-release', ext: 'aar')
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:support-annotations:23.1.1'
+    compile 'com.android.support:preference-v7:23.1.1'
+    compile 'com.android.support:percent:23.1.1'
+    compile 'com.android.support:leanback-v17:23.1.1'
+    compile 'com.android.support:preference-leanback-v17:23.1.1'
+    compile files("libs/axmlrpc.jar")
+    testCompile 'junit:junit:4.12'
+}
+
+def buildTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+def hostName() {
+    return System.getProperty("user.name") + "@" + InetAddress.localHost.hostName
+}
+
+def revision() {
+//    def code = new ByteArrayOutputStream()
+//    exec {
+//        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+//        standardOutput = code
+//    }
+//    return code.toString()
+    return "2237092"
+}

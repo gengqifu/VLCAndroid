@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/interface_prefs_screen"
+    android:key="ui_category" >
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="enable_black_theme"
+        android:summary="@string/enable_black_theme_summary"
+        android:title="@string/enable_black_theme" />
+    <PreferenceCategory android:title="@string/interface_gui" >
+        <CheckBoxPreference
+            android:key="tv_ui"
+            android:summary="@string/tv_ui_summary"
+            android:title="@string/tv_ui_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="lockscreen_cover"
+            android:summary="@string/lockscreen_cover_summary"
+            android:title="@string/lockscreen_cover_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="force_list_portrait"
+            android:summary="@string/force_list_portrait_summary"
+            android:title="@string/force_list_portrait" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/audio_title_alignment_list"
+            android:entryValues="@array/audio_title_alignment_values"
+            android:key="audio_title_alignment"
+            android:persistent="true"
+            android:title="@string/audio_title_alignment" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/interface_controls" >
+        <android.support.v14.preference.MultiSelectListPreference
+            android:dialogTitle="@string/preferences_languages_download"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="languages_download_list"
+            android:summary="@string/list_languages_download_summary"
+            android:title="@string/list_languages_download_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="save_brightness"
+            android:summary="@string/save_brightness_summary"
+            android:title="@string/save_brightness_title" />
+        <ListPreference
+            android:defaultValue="0"
+            android:key="enable_touch_player"
+            android:title="@string/player_touch_title"
+            android:entries="@array/touch_entries"
+            android:entryValues="@array/touch_values"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="dialog_confirm_resume"
+            android:summary="@string/confirm_resume_summary"
+            android:title="@string/confirm_resume_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_seek_buttons"
+            android:summary="@string/enable_seek_buttons_summary"
+            android:title="@string/enable_seek_buttons" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enable_headset_detection"
+            android:summary="@string/enable_headset_detection_summary"
+            android:title="@string/enable_headset_detection" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_steal_remote_control"
+            android:summary="@string/enable_steal_remote_control_summary"
+            android:title="@string/enable_steal_remote_control" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/interface_secondary_display_category_title" >
+        <Preference android:summary="@string/interface_secondary_display_category_summary" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_clone_mode"
+            android:summary="@string/enable_clone_mode_summary"
+            android:title="@string/enable_clone_mode" />
+    </PreferenceCategory>
+</PreferenceScreen>
