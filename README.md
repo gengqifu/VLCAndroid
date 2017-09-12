@@ -1,7 +1,7 @@
 # VLCAndroid
 VLCAndroid in Android Studio
 
-注明的开源播放器VLC Android版本。
+著名的开源播放器VLC Android版本。
 
 1. 创建一个新的Android Studio项目VLCAndroid
 
